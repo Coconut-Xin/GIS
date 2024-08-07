@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssj.gis4.mapper.ClusterMapper">
+
+    <resultMap type="Cluster" id="ClusterResult">
+        <result property="id"    column="id"    />
+        <result property="clusterId"    column="cluster_id"    />
+        <result property="clusterName"    column="cluster_name"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="taskId"    column="task_id"    />
+        <result property="nodesList"    column="nodes_list"  typeHandler="com.ssj.gis4.handler.ListStringTypeHandler"  />
+        <result property="nodesNumber"    column="nodes_number"    />
+        <result property="clusterStatus"    column="cluster_status"    />
+        <result property="lostNodesNumber"    column="lost_nodes_number"    />
+        <result property="damagedNodesNumber"    column="communication_station_status"    />
+        <result property="communicationStationStatus"    column="communication_station_status"    />
+        <result property="electronicInterferenceStatus"    column="electronic_interference_status"    />
+        <result property="taskFinishFlag"    column="task_finish_flag"    />
+    </resultMap>
+
+
+    <select id="selectClusterList" resultMap="ClusterResult">
+        select * from cluster where cluster.create_time = (select MAX(create_time) from cluster)
+    </select>
+
+
+
+
+
+
+</mapper>
