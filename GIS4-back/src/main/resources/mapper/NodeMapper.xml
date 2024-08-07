@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssj.gis4.mapper.NodeMapper">
+
+    <resultMap type="Node" id="NodeResult">
+        <result property="id"    column="id"    />
+        <result property="vehicleId"    column="vehicle_id"    />
+        <result property="vehicleName"    column="vehicle_name"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="speed"    column="speed"    />
+        <result property="longitude"    column="longitude"    />
+        <result property="latitude"    column="latitude"    />
+        <result property="height"    column="height"    />
+        <result property="directionAngle"    column="direction_angle"    />
+        <result property="pitchAngle"    column="pitch_angle"    />
+        <result property="rollAngle"    column="roll_angle"    />
+        <result property="surplusVoyage"    column="surplus_voyage"    />
+        <result property="surplusTime"    column="surplus_time"    />
+        <result property="surplusEnergy"    column="surplus_energy"    />
+        <result property="taskId"    column="task_id"    />
+        <result property="clusterId"    column="cluster_id"    />
+        <result property="communicationsNumber"    column="communications_number"    />
+        <result property="communicationNodes"    column="communication_nodes"  typeHandler="com.ssj.gis4.handler.ListStringTypeHandler"  />
+        <result property="communicationSituation"    column="communication_situation"    />
+        <result property="damageSituation"    column="damage_situation"    />
+        <result property="electronicInterferenceStatus"    column="electronic_interference_status"    />
+    </resultMap>
+
+<!-- 获取某个表的最新数据-->
+    <select id="getDataByNodeId" resultMap="NodeResult" >
+        <bind name="tableName" value="'node_' + nodeId"/>
+--         SELECT * FROM ${tableName}
+        SELECT * FROM ${tableName} WHERE ${tableName}.create_time = (select MAX(create_time) from ${tableName})
+    </select>
+
+
+    <!--2024年7月17日 02点08分： ROS测试获取某个表的最新数据-->
+    <select id="getDataByNodeIdTestRos" resultMap="NodeResult" >
+        <bind name="tableName" value="'node_' + nodeId"/>
+        select id,vehicle_id,vehicle_name,CONCAT(FROM_UNIXTIME(create_time, '%Y-%m-%d %H:%i:%s'),'.',LPAD(FLOOR(MOD(create_time * 1000, 1000)), 3, '0'))   AS create_time , speed, longitude, latitude, height, direction_angle, pitch_angle, roll_angle, surplus_voyage,surplus_time,surplus_energy, task_id, cluster_id, communications_number,communication_nodes, communication_situation, damage_situation, electronic_interference_status  FROM ${tableName} WHERE ${tableName}.create_time = (select MAX(create_time) from ${tableName})
+    </select>
+
+    <sql id="selectNodeVo">
+        select id, create_time, speed, longitude, latitude, height, direction_angle, pitch_angle, roll_angle, surplus_voyage, task_id, cluster_id, communications_number, communication_situation, damage_situation, electronic_interference_status from node
+    </sql>
+
+    <select id="selectNodeList" parameterType="Node" resultMap="NodeResult">
+        <include refid="selectNodeVo"/>
+        <where>
+            <if test="speed != null "> and speed = #{speed}</if>
+            <if test="longitude != null "> and longitude = #{longitude}</if>
+            <if test="latitude != null "> and latitude = #{latitude}</if>
+            <if test="height != null "> and height = #{height}</if>
+            <if test="directionAngle != null "> and direction_angle = #{directionAngle}</if>
+            <if test="pitchAngle != null "> and pitch_angle = #{pitchAngle}</if>
+            <if test="rollAngle != null "> and roll_angle = #{rollAngle}</if>
+            <if test="surplusVoyage != null "> and surplus_voyage = #{surplusVoyage}</if>
+            <if test="taskId != null  and taskId != ''"> and task_id = #{taskId}</if>
+            <if test="clusterId != null  and clusterId != ''"> and cluster_id = #{clusterId}</if>
+            <if test="communicationsNumber != null "> and communications_number = #{communicationsNumber}</if>
+            <if test="communicationSituation != null  and communicationSituation != ''"> and communication_situation = #{communicationSituation}</if>
+            <if test="damageSituation != null "> and damage_situation = #{damageSituation}</if>
+            <if test="electronicInterferenceStatus != null  and electronicInterferenceStatus != ''"> and electronic_interference_status = #{electronicInterferenceStatus}</if>
+        </where>
+    </select>
+
+    <select id="selectNodeById" parameterType="Long" resultMap="NodeResult">
+        <include refid="selectNodeVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertNode" parameterType="Node" useGeneratedKeys="true" keyProperty="id">
+        insert into node
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="createTime != null">create_time,</if>
+            <if test="speed != null">speed,</if>
+            <if test="longitude != null">longitude,</if>
+            <if test="latitude != null">latitude,</if>
+            <if test="height != null">height,</if>
+            <if test="directionAngle != null">direction_angle,</if>
+            <if test="pitchAngle != null">pitch_angle,</if>
+            <if test="rollAngle != null">roll_angle,</if>
+            <if test="surplusVoyage != null">surplus_voyage,</if>
+            <if test="taskId != null">task_id,</if>
+            <if test="clusterId != null">cluster_id,</if>
+            <if test="communicationsNumber != null">communications_number,</if>
+            <if test="communicationSituation != null">communication_situation,</if>
+            <if test="damageSituation != null">damage_situation,</if>
+            <if test="electronicInterferenceStatus != null">electronic_interference_status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="createTime != null">#{createTime},</if>
+            <if test="speed != null">#{speed},</if>
+            <if test="longitude != null">#{longitude},</if>
+            <if test="latitude != null">#{latitude},</if>
+            <if test="height != null">#{height},</if>
+            <if test="directionAngle != null">#{directionAngle},</if>
+            <if test="pitchAngle != null">#{pitchAngle},</if>
+            <if test="rollAngle != null">#{rollAngle},</if>
+            <if test="surplusVoyage != null">#{surplusVoyage},</if>
+            <if test="taskId != null">#{taskId},</if>
+            <if test="clusterId != null">#{clusterId},</if>
+            <if test="communicationsNumber != null">#{communicationsNumber},</if>
+            <if test="communicationSituation != null">#{communicationSituation},</if>
+            <if test="damageSituation != null">#{damageSituation},</if>
+            <if test="electronicInterferenceStatus != null">#{electronicInterferenceStatus},</if>
+         </trim>
+    </insert>
+
+    <update id="updateNode" parameterType="Node">
+        update node
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="speed != null">speed = #{speed},</if>
+            <if test="longitude != null">longitude = #{longitude},</if>
+            <if test="latitude != null">latitude = #{latitude},</if>
+            <if test="height != null">height = #{height},</if>
+            <if test="directionAngle != null">direction_angle = #{directionAngle},</if>
+            <if test="pitchAngle != null">pitch_angle = #{pitchAngle},</if>
+            <if test="rollAngle != null">roll_angle = #{rollAngle},</if>
+            <if test="surplusVoyage != null">surplus_voyage = #{surplusVoyage},</if>
+            <if test="taskId != null">task_id = #{taskId},</if>
+            <if test="clusterId != null">cluster_id = #{clusterId},</if>
+            <if test="communicationsNumber != null">communications_number = #{communicationsNumber},</if>
+            <if test="communicationSituation != null">communication_situation = #{communicationSituation},</if>
+            <if test="damageSituation != null">damage_situation = #{damageSituation},</if>
+            <if test="electronicInterferenceStatus != null">electronic_interference_status = #{electronicInterferenceStatus},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteNodeById" parameterType="Long">
+        delete from node where id = #{id}
+    </delete>
+
+    <delete id="deleteNodeByIds" parameterType="String">
+        delete from node where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+</mapper>

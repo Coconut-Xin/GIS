@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssj.gis4.mapper.TaskMapper">
+
+    <resultMap type="Task" id="TaskResult">
+        <result property="id"    column="id"    />
+        <result property="taskId"    column="task_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="taskType"    column="task_type"    />
+        <result property="taskDescription"    column="task_description"    />
+        <result property="nodesList"    column="nodes_list"   typeHandler="com.ssj.gis4.handler.ListStringTypeHandler"   />
+        <result property="nodesType"    column="nodes_type"   typeHandler="com.ssj.gis4.handler.ListStringTypeHandler"   />
+        <result property="clustersList"    column="clusters_list"   typeHandler="com.ssj.gis4.handler.ListStringTypeHandler"   />
+        <result property="clusterNumber"    column="cluster_number"    />
+        <result property="taskLocationLongitude"    column="task_location_longitude"    />
+        <result property="taskLocationLatitude"    column="task_location_latitude"    />
+        <result property="taskLocationAltitude"    column="task_location_altitude"    />
+        <result property="taskAreaRadius"    column="task_area_radius"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="completionTime"    column="completion_time"    />
+        <result property="actualStartTime"    column="actual_start_time"    />
+        <result property="actualCompletionTime"    column="actual_completion_time"    />
+        <result property="taskFinishFlag"    column="task_finish_flag"    />
+    </resultMap>
+
+
+    <select id="selectTaskList" resultMap="TaskResult">
+        select * from task where task.create_time = (select MAX(create_time) from task)
+    </select>
+
+
+
+
+
+</mapper>
